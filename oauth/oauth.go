@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	common_errors "github.com/gpankaj/common-go-oauth/common-errors"
+	"github.com/mercadolibre/golang-restclient/rest"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
-	"github.com/mercadolibre/golang-restclient/rest"
 	"time"
 )
 var (
@@ -69,6 +70,9 @@ func GetCallerId(r *http.Request) int64 {
 }
 
 func AuthenticateRequest(r *http.Request) *common_errors.RestErr{
+
+	println("Header is ==================")
+
 	if r == nil {
 		return nil
 	}
@@ -83,7 +87,8 @@ func AuthenticateRequest(r *http.Request) *common_errors.RestErr{
 	oauthTokenStructAsInstance, err := getAccessToken(accessTokenFromParam)
 	if err != nil {
 		if err.Code == http.StatusNotFound {
-			return nil
+			log.Println("Error ", err.Code)
+			return common_errors.NewInternalServerError("Access token error "+ err.Message)
 		}
 		return err
 	}
