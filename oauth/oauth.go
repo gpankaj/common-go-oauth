@@ -53,10 +53,13 @@ func GetClientId(r *http.Request) int64{
 	}
 	//clientId , err := strconv.ParseInt(r.Header.Get(headerXClientId),10,64)
 	clientId , err := strconv.Atoi(r.Header.Get(headerXClientId))
+	log.Println("Client id in GetClientId ", clientId)
 
-	if err == nil {
+	if err != nil {
+		log.Println("Hit an issue during conversion from str to int in GetClientId ", err.Error())
 		return 0
 	}
+	
 	return int64(clientId)
 }
 
@@ -103,6 +106,7 @@ func AuthenticateRequest(r *http.Request) *common_errors.RestErr{
 	r.Header.Add(headerXClientId,fmt.Sprintf("%v",oauthTokenStructAsInstance.User_id))
 	r.Header.Add(headerXCallerId,fmt.Sprintf("%v",oauthTokenStructAsInstance.Id))
 
+	log.Println("headerXClientId ==> " ,r.Header.Values(headerXClientId))
 
 	return nil
 }
