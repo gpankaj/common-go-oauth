@@ -80,6 +80,7 @@ func AuthenticateRequest(r *http.Request) *common_errors.RestErr{
 	//api.shiftinghub.com/resource?access_token=abc123
 	accessTokenFromParam := strings.TrimSpace(r.URL.Query().Get(paramAccessToken))
 	if accessTokenFromParam == "" {
+		log.Println("Returing because accessTokenFromParam is empty")
 		return nil
 	}
 
@@ -92,6 +93,8 @@ func AuthenticateRequest(r *http.Request) *common_errors.RestErr{
 		}
 		return err
 	}
+	log.Println("User_id from instaance of oauthTokenStructAsInstance is ", oauthTokenStructAsInstance.User_id)
+	log.Println("Id from instance of oauthTokenStructAsInstance is ", oauthTokenStructAsInstance.Id);
 
 	r.Header.Add(headerXClientId,fmt.Sprintf("%v",oauthTokenStructAsInstance.Id))
 	r.Header.Add(headerXCallerId,fmt.Sprintf("%v",oauthTokenStructAsInstance.User_id))
@@ -107,7 +110,10 @@ func cleanRequest(r *http.Request) {
 }
 
 func getAccessToken(tokenId string) (*oauthTokenStructAsClass, *common_errors.RestErr) {
+	log.Println("Token inside getAccessToken ",tokenId );
+
 	response:=oauthRestClient.Get(fmt.Sprintf("/oauth/access_token/%s", tokenId))
+
 	if response == nil || response.Response == nil  { //Timeout situation.
 		return nil, common_errors.NewInternalServerError("invalid restClientRequest when trying to get access token")
 	}
@@ -126,5 +132,6 @@ func getAccessToken(tokenId string) (*oauthTokenStructAsClass, *common_errors.Re
 	if err := json.Unmarshal(response.Bytes(), &oauthTokenStructAsInstance); err!=nil {
 		return nil, common_errors.NewInternalServerError("Mismatch in signature of access token response")
 	}
+	log.Println("inside getAccessToken User_id ", oauthTokenStructAsInstance.User_id)
 	return &oauthTokenStructAsInstance, nil
 }
