@@ -96,13 +96,12 @@ func AuthenticateRequest(r *http.Request) *common_errors.RestErr{
 		return err
 	}
 
-	log.Println("Id from instance of oauthTokenStructAsInstance is ", oauthTokenStructAsInstance.Id);
-	
 	log.Println("User_id from instaance of oauthTokenStructAsInstance is ", oauthTokenStructAsInstance.User_id)
 
+	log.Println("Id from instance of oauthTokenStructAsInstance is ", oauthTokenStructAsInstance.Id);
 
-	r.Header.Add(headerXClientId,fmt.Sprintf("%v",oauthTokenStructAsInstance.Id))
-	r.Header.Add(headerXCallerId,fmt.Sprintf("%v",oauthTokenStructAsInstance.User_id))
+	r.Header.Add(headerXClientId,fmt.Sprintf("%v",oauthTokenStructAsInstance.User_id))
+	r.Header.Add(headerXCallerId,fmt.Sprintf("%v",oauthTokenStructAsInstance.Id))
 
 
 	return nil
