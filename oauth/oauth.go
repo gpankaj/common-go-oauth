@@ -51,11 +51,13 @@ func GetClientId(r *http.Request) int64{
 	if r == nil {
 		return 0
 	}
-	clientId , err := strconv.ParseInt(r.Header.Get(headerXClientId),10,64)
+	//clientId , err := strconv.ParseInt(r.Header.Get(headerXClientId),10,64)
+	clientId , err := strconv.Atoi(r.Header.Get(headerXClientId))
+
 	if err == nil {
 		return 0
 	}
-	return clientId
+	return int64(clientId)
 }
 
 func GetCallerId(r *http.Request) int64 {
@@ -93,11 +95,15 @@ func AuthenticateRequest(r *http.Request) *common_errors.RestErr{
 		}
 		return err
 	}
-	log.Println("Client_id from instaance of oauthTokenStructAsInstance is ", oauthTokenStructAsInstance.Client_id)
-	log.Println("Id from instance of oauthTokenStructAsInstance is ", oauthTokenStructAsInstance.Id);
 
-	r.Header.Add(headerXClientId,fmt.Sprintf("%v",oauthTokenStructAsInstance.Client_id))
+	log.Println("Id from instance of oauthTokenStructAsInstance is ", oauthTokenStructAsInstance.Id);
+	
+	log.Println("User_id from instaance of oauthTokenStructAsInstance is ", oauthTokenStructAsInstance.User_id)
+
+
+	r.Header.Add(headerXClientId,fmt.Sprintf("%v",oauthTokenStructAsInstance.Id))
 	r.Header.Add(headerXCallerId,fmt.Sprintf("%v",oauthTokenStructAsInstance.User_id))
+
 
 	return nil
 }
