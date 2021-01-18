@@ -36,12 +36,10 @@ const (
 )
 func IsPublic(r *http.Request) bool {
 	if r == nil {
+		log.Println("Checking if header is public but request object is null")
 		return true
 	}
-	if r.Header.Get(headerXPublic) != "true" || r.Header.Get(headerXPublic) != "false" {
-		return true
-	}
-	if r.Header.Get(headerXPublic) == "true"{
+	if r.Header.Get(headerXPublic)=="" && r.Header.Get(headerXPublic) == "true" {
 		return true
 	}
 	return false
@@ -59,7 +57,7 @@ func GetClientId(r *http.Request) int64{
 		log.Println("Hit an issue during conversion from str to int in GetClientId ", err.Error())
 		return 0
 	}
-	
+
 	return int64(clientId)
 }
 
@@ -105,6 +103,7 @@ func AuthenticateRequest(r *http.Request) *common_errors.RestErr{
 
 	r.Header.Add(headerXClientId,fmt.Sprintf("%v",oauthTokenStructAsInstance.User_id))
 	r.Header.Add(headerXCallerId,fmt.Sprintf("%v",oauthTokenStructAsInstance.Id))
+	r.Header.Add(headerXPublic,"false")
 
 	log.Println("headerXClientId ==> " ,r.Header.Values(headerXClientId))
 
